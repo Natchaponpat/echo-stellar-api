@@ -47,7 +47,7 @@ func main() {
 
 		for _, u := range listUser {
 			if user.Name == u.Name {
-				return echo.NewHTTPError(http.StatusBadRequest, "user's name has been used")
+				return echo.NewHTTPError(http.StatusBadRequest, "name has been used")
 			}
 		}
 
