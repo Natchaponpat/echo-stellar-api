@@ -3,7 +3,8 @@ package user
 import (
 	"net/http"
 
-	"github.com/Natchaponpat/echo-stellar-api/better-echo/example/model"
+	"github.com/Natchaponpat/echo-stellar-api/echo/better-echo/example/model"
+
 	"github.com/labstack/echo"
 )
 
@@ -25,7 +26,11 @@ func (h *Handler) Handle(e *echo.Echo) {
 
 func (h *Handler) list() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, h.listUser)
+		res := h.listUser
+		if res == nil {
+			res = []model.User{}
+		}
+		return c.JSON(http.StatusOK, res)
 	}
 }
 
@@ -52,12 +57,19 @@ func (h *Handler) add() echo.HandlerFunc {
 func (h *Handler) get() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		name := c.Param("name")
+		var user model.User
+		var found bool
 		for _, u := range h.listUser {
 			if u.Name == name {
-				return c.JSON(http.StatusOK, u)
+				user = u
+				found = true
+				break
 			}
 		}
+		if !found {
+			return echo.NewHTTPError(http.StatusNotFound, "user not found")
+		}
+		return c.JSON(http.StatusOK, user)
 
-		return echo.NewHTTPError(http.StatusNotFound, "user not found")
 	}
 }

@@ -41,7 +41,6 @@ func main() {
 		var user User
 		err := c.Bind(&user)
 		if err != nil {
-			c.Logger().Error(err)
 			return echo.NewHTTPError(http.StatusInternalServerError)
 		}
 
@@ -60,13 +59,19 @@ func main() {
 	e.GET("/users/:name", func(c echo.Context) error {
 		name := c.Param("name")
 
+		var user User
+		var found bool
 		for _, u := range listUser {
 			if u.Name == name {
-				return c.JSON(http.StatusOK, u)
+				user = u
+				found = true
+				break
 			}
 		}
-
-		return echo.NewHTTPError(http.StatusNotFound, "user not found")
+		if !found {
+			return echo.NewHTTPError(http.StatusNotFound, "user not found")
+		}
+		return c.JSON(http.StatusOK, user)
 	})
 
 	// Start new server
