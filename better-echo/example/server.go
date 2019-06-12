@@ -12,7 +12,8 @@ func main() {
 	e := echo.New()
 	e.Logger.SetLevel(log.INFO)
 
-	e.Use(middleware.LoggerWithConfig(middleware.DefaultLoggerConfig))
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	userHandler, err := user.New()
 	if err != nil {
