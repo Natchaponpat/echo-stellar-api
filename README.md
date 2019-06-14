@@ -8,11 +8,11 @@ git clone https://github.com/Natchaponpat/echo-stellar-api.git
 ```
 2. Download package dependencies. Go to project directory and run command depend on your Go version
 
-For Go 1.11 or newer version
+For Go 1.11 or newer
 ```
 GO111MODULE=on go get -u
 ```
-For Go 1.10 or older version
+For older version
 ```
 go get -u github.com/labstack/echo/...
 go get -u github.com/globalsign/mgo/...
