@@ -8,13 +8,13 @@ package main
 // 3. Get user's info by name
 // ==========================================================
 
-// Create new type struct called User
-// which consist of two variable: Name as string and Age as integer
-// Also included json tag.
-
-// Init empty List for store new User.
-
 func main() {
+	// Create new type struct called User
+	// which consist of two variable: Name as string and Age as integer
+	// Also included json tag.
+
+	// Init empty List for store new User.
+
 	// Init new Echo instance
 
 	// Create new route using method GET to list the existing users

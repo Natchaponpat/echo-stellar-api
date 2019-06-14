@@ -14,18 +14,17 @@ import (
 	"github.com/labstack/echo"
 )
 
-// Create new type struct called User
-// which consist of two variable: Name as string and Age as integer
-// Also included json tag.
-type User struct {
-	Name string `json:"name"`
-	Age  int    `json:"age"`
-}
-
-// Init empty List for store new User.
-var listUser []User
-
 func main() {
+	// Create new type struct called User
+	// which consist of two variable: Name as string and Age as integer
+	// Also included json tag.
+	type User struct {
+		Name string `json:"name"`
+		Age  int    `json:"age"`
+	}
+
+	// Init empty List for store new User.
+	var listUser []User
 	// Init new Echo instance
 	e := echo.New()
 
