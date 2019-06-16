@@ -11,7 +11,7 @@ package main
 func main() {
 	// Create new type struct called User
 	// which consist of two variable: Name as string and Age as integer
-	// Also included json tag.
+	// Also including json tag.
 
 	// Init empty List for store new User.
 
