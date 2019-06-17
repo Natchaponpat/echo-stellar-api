@@ -6,13 +6,27 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
+type IUserStorage interface {
+	List() ([]model.User, error)
+	Get(name string) (model.User, error)
+	Create(model.User) error
+}
+
+type DBConfig struct {
+	Host      string
+	Username  string
+	Pass      string
+	DB        string
+	Colletion string
+}
+
 type UserStorage struct {
 	conn       *mgo.Session
 	db         string
 	collection string
 }
 
-func NewUserStorage(conn *mgo.Session, db string, collection string) *UserStorage {
+func NewUserStorage(conn *mgo.Session, db string, collection string) IUserStorage {
 	return &UserStorage{
 		conn:       conn,
 		db:         db,

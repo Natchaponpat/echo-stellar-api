@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Natchaponpat/echo-stellar-api/echo/better-echo/example/handle/user"
+	"github.com/Natchaponpat/echo-stellar-api/echo/better-echo/example/storage"
 	"github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/log"
 
@@ -15,7 +16,8 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	userHandler, err := user.New()
+	userStorage := storage.NewUserStorage()
+	userHandler, err := user.New(userStorage)
 	if err != nil {
 		e.Logger.Errorf("cannot init user handler: %v", err)
 		return

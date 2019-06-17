@@ -1,7 +1,11 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/Natchaponpat/echo-stellar-api/echo/mongo/handle/user"
+	"github.com/Natchaponpat/echo-stellar-api/echo/mongo/storage"
+	"github.com/globalsign/mgo"
 	"github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/log"
 
@@ -15,14 +19,22 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	config := user.DBConfig{
+	config := storage.DBConfig{
 		Host:      "localhost:27017",
 		Username:  "admin",
 		Pass:      "password",
 		DB:        "test",
 		Colletion: "users",
 	}
-	userHandler, err := user.New(config)
+	uri := fmt.Sprintf("%v:%v@%v", config.Username, config.Pass, config.Host)
+	session, err := mgo.Dial(uri)
+	if err != nil {
+		e.Logger.Errorf("cannot connect mongo db: %v", err)
+		return
+	}
+	userStorage := storage.NewUserStorage(session, config.DB, config.Colletion)
+
+	userHandler, err := user.New(userStorage)
 	if err != nil {
 		e.Logger.Errorf("cannot init user handler: %v", err)
 		return

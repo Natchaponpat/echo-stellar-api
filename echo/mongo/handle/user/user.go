@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Natchaponpat/echo-stellar-api/echo/mongo/model"
@@ -14,25 +13,10 @@ import (
 )
 
 type Handler struct {
-	userStorage *storage.UserStorage
+	userStorage storage.IUserStorage
 }
 
-type DBConfig struct {
-	Host      string
-	Username  string
-	Pass      string
-	DB        string
-	Colletion string
-}
-
-func New(config DBConfig) (*Handler, error) {
-	uri := fmt.Sprintf("%v:%v@%v", config.Username, config.Pass, config.Host)
-	session, err := mgo.Dial(uri)
-	if err != nil {
-		return nil, err
-	}
-	userStorage := storage.NewUserStorage(session, config.DB, config.Colletion)
-
+func New(userStorage storage.IUserStorage) (*Handler, error) {
 	return &Handler{userStorage}, nil
 }
 
@@ -64,6 +48,17 @@ func (h *Handler) add() echo.HandlerFunc {
 		if err != nil {
 			c.Logger().Error(err)
 			return echo.NewHTTPError(http.StatusInternalServerError)
+		}
+
+		u, err := h.userStorage.Get(user.Name)
+		if err != nil {
+			if err != mgo.ErrNotFound {
+				c.Logger().Error(err)
+				return echo.NewHTTPError(http.StatusInternalServerError)
+			}
+		}
+		if u.Name != "" {
+			return echo.NewHTTPError(http.StatusBadRequest, "name has been used")
 		}
 
 		err = h.userStorage.Create(user)

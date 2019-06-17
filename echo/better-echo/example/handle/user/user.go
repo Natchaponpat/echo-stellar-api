@@ -3,18 +3,20 @@ package user
 import (
 	"net/http"
 
+	"github.com/Natchaponpat/echo-stellar-api/echo/better-echo/example/storage"
+
 	"github.com/Natchaponpat/echo-stellar-api/echo/better-echo/example/model"
 
 	"github.com/labstack/echo"
 )
 
 type Handler struct {
-	listUser []model.User
+	userStorage storage.IUserStorage
 }
 
-func New() (*Handler, error) {
+func New(storage storage.IUserStorage) (*Handler, error) {
 	return &Handler{
-		listUser: []model.User{},
+		userStorage: storage,
 	}, nil
 }
 
@@ -26,9 +28,9 @@ func (h *Handler) Handle(e *echo.Echo) {
 
 func (h *Handler) list() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		res := h.listUser
-		if res == nil {
-			res = []model.User{}
+		res, err := h.userStorage.List()
+		if err != nil {
+			return err
 		}
 		return c.JSON(http.StatusOK, res)
 	}
@@ -43,13 +45,10 @@ func (h *Handler) add() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusInternalServerError)
 		}
 
-		for _, u := range h.listUser {
-			if user.Name == u.Name {
-				return echo.NewHTTPError(http.StatusBadRequest, "name has been used")
-			}
+		err = h.userStorage.Create(user)
+		if err != nil {
+			return err
 		}
-
-		h.listUser = append(h.listUser, user)
 		return c.JSON(http.StatusOK, user)
 	}
 }
@@ -57,19 +56,10 @@ func (h *Handler) add() echo.HandlerFunc {
 func (h *Handler) get() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		name := c.Param("name")
-		var user model.User
-		var found bool
-		for _, u := range h.listUser {
-			if u.Name == name {
-				user = u
-				found = true
-				break
-			}
+		res, err := h.userStorage.Get(name)
+		if err != nil {
+			return err
 		}
-		if !found {
-			return echo.NewHTTPError(http.StatusNotFound, "user not found")
-		}
-		return c.JSON(http.StatusOK, user)
-
+		return c.JSON(http.StatusOK, res)
 	}
 }
