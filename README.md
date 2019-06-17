@@ -8,15 +8,9 @@ mkdir -p $(go env GOPATH)/src/github.com/Natchaponpat && cd $_
 git clone https://github.com/Natchaponpat/echo-stellar-api.git
 ```
 2. Download package dependencies. Go to project directory and run command depend on your Go version
-
-For Go 1.11 or newer
 ```
-GO111MODULE=on go get -u
-```
-For older version
-```
-go get github.com/labstack/echo/...
-go get github.com/globalsign/mgo/...
+go get github.com/labstack/echo
+go get github.com/globalsign/mgo
 ```
 3. Test the project
 ```
